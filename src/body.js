@@ -104,20 +104,24 @@ var Body = Backgrid.Body = Backgrid.View.extend({
       return;
     }
 
-    var row = new this.row({
-      columns: this.columns,
-      model: model
-    });
-
     var index = collection.indexOf(model);
-    this.rows.splice(index, 0, row);
 
-    var el = this.el;
-    var children = el.childNodes;
-    var rowEl = row.render().el;
+    // If we can actually find this model, then create a row for it.
+    if (index !== -1) {
+        var row = new this.row({
+          columns: this.columns,
+          model: model
+        });
 
-    if (index >= children.length) el.appendChild(rowEl);
-    else el.insertBefore(rowEl, children[index]);
+        this.rows.splice(index, 0, row);
+
+        var el = this.el;
+        var children = el.childNodes;
+        var rowEl = row.render().el;
+
+        if (index >= children.length) el.appendChild(rowEl);
+        else el.insertBefore(rowEl, children[index]);
+    }
 
     return this;
   },
@@ -347,10 +351,10 @@ var Body = Backgrid.Body = Backgrid.View.extend({
     var i = this.collection.indexOf(model);
     var j = this.columns.indexOf(column);
     var cell, renderable, editable, m, n;
-    
+
     // return if model being edited in a different grid
     if (j === -1) return this;
-    
+
     this.rows[i].cells[j].exitEditMode();
 
     if (command.moveUp() || command.moveDown() || command.moveLeft() ||
